@@ -1,0 +1,31 @@
+name: test
+on:
+  pull_request:
+    branches: main
+
+jobs:
+  diff:
+    name: Check file changes
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+       with: 
+         ref: ${{ github.event.pull_request.head.sha }}
+     - run: | # if only these files change, no tests are run
+         cat > ignore-config-files.txt<< EOF
+         **/*.md
+         .github/workflows/test.yml
+         EOF
+     - name: Count non-txt file changes except module3
+       id: diff-non-txt
+       uses: tj-actions/changed-files@af292f1e845a0377b596972698a8598734eb2796 # v40.0.0
+       with:
+         files_ignore_from_source_file: ignore-config-files.txt
+         files_ignore: |
+           **/*.txt
+           !module3/**/*.txt
+     - name: List all changed files except for .txt files outside module3
+       run: |
+         for file in ${{ steps.diff-non-txt.outputs.all_changed_files }}; do
+           echo "$file was changed"
+         done
