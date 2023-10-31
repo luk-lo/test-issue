@@ -15,7 +15,7 @@ jobs:
        id: diff-non-txt
        uses: tj-actions/changed-files@bfc49f4cff6934aa236c171f9bcbf1dd6b1ef438 # v40.0.1
        with:
-         files: module3/**.*.txt
+         files: module3/**/*.txt
          files_ignore: "**/*.txt"
      - name: List all changed files except for .txt files outside module3
        run: |
